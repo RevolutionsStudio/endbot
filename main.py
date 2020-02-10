@@ -80,11 +80,11 @@ async def on_ready():
 # \----------------------
 
 
-""" try:
+try:
   token = os.environ['TOKEN']
 except KeyError:
   # Not on server
   echo("Quit because TOKEN not found.")
-  exit() """
+  exit()
 
-CLIENT.run("NTczNTgzNDk4NzQ5ODA0NTQ0.XkGhsg.YrQ8K-XgWUdBc22X7hIBJCkY95E")
+CLIENT.run(token)
