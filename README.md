@@ -1,0 +1,2 @@
+# endbot
+ A discord bot
