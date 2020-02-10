@@ -88,3 +88,4 @@ except KeyError:
   exit()
 
 CLIENT.run(token)
+# if this sentence is modified, it just mean that I need to update the code for refresh the bot on Heraku server
