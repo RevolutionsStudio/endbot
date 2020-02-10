@@ -1,6 +1,9 @@
 import sys, os
 
-print("Working !")
-sys.stdout.flush()
-print("Yeah boiii")
-sys.stdout.flush()
+def echo(*args):
+    print(*args)
+    sys.stdout.flush()
+
+echo("--- App Started ---")
+
+echo(os.environ['TOKEN'])
