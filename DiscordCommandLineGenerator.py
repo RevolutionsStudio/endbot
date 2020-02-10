@@ -1,5 +1,9 @@
 import shlex
+import sys
 
+def echo(*args):
+  print(*args)
+  sys.stdout.flush()
 
 # La classe de la ligne de commande
 class CommandLine():
@@ -7,7 +11,6 @@ class CommandLine():
   def __init__(self,client,**kwargs):
     self.funct = []
     self.client = client
-    self.quit = False
     self.cmdReturn = ""
     self.vars = {}  
 
@@ -83,16 +86,19 @@ class CommandLine():
     return inner
 
 
-  async def execute(self,commandes_raw,message):
-    commandes = commandes_raw.split(";")
+  def execute(self,message):
+    commandes = message.content.split(";")
     for commande in commandes:
       trt_commande = shlex.split(commande)
       self.cmdReturn = self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
-    if self.cmdReturn != None: await message.channel.send(self.cmdReturn)
+    if self.cmdReturn != None: return self.cmdReturn
 
+  def start(self):
+    if self.__debug: print("\n"*10)
+    print(self.__msgStart)
 
   # executer une commande
-  async def __command(self,execute,userRole=[]):
+  def __command(self,execute,userRole=[]):
     if isinstance(execute,str):execute = shlex.split(execute) # if argument not in list, conversion to list
 
     if execute == []: return None # is command is empty
@@ -101,11 +107,12 @@ class CommandLine():
     for funct in self.funct: # for every command register
       if funct.__name__.split(" ")[0] == execute[0]: # Found the command
         if funct.authGroup == None or funct.authGroup in userRole: # if role right to command AUTH
+          echo(funct)
           try:
             if funct.caller: returning = funct(funct.caller,*execute[1:],**self.vars) # Call the function w/ the caller
             else:returning = funct(*execute[1:],**self.vars) # call the function without
           except AssertionError as err: # if argument error
-            print("Erreur d'argument: "+str(err))
+            echo("Erreur d'argument: "+str(err))
           finally:
             find =True # we found the function
     if not find: # if we havn't find the function
