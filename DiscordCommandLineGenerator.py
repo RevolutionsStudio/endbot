@@ -83,7 +83,7 @@ class CommandLine():
     return inner
 
 
-  def execute(self,commandes_raw,message):
+  async def execute(self,commandes_raw,message):
     commandes = commandes_raw.split(";")
     for commande in commandes:
       trt_commande = shlex.split(commande)
@@ -92,7 +92,7 @@ class CommandLine():
 
 
   # executer une commande
-  def __command(self,execute,userRole=[]):
+  async def __command(self,execute,userRole=[]):
     if isinstance(execute,str):execute = shlex.split(execute) # if argument not in list, conversion to list
 
     if execute == []: return None # is command is empty
