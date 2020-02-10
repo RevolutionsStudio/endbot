@@ -4,9 +4,9 @@ import shlex
 # La classe de la ligne de commande
 class CommandLine():
 
-    def __init__(self,**kwargs):
+	def __init__(self,**kwargs):
 		self.funct = []
-        self.quit = False
+		self.quit = False
 		self.cmdReturn = ""
 		self.vars = {}
 

@@ -1,9 +1,4 @@
 import sys, os
-import discord.py
-
-import CommandLineGenerator
-
-CommandLine = CommandLineGenerator.CommandLine()
 
 def echo(*args):
     print(*args)
@@ -11,7 +6,24 @@ def echo(*args):
 
 echo("--- App Started ---")
 
+import asyncio, discord
+client = discord.Client()
+
+import CommandLineGenerator
+CommandLine = CommandLineGenerator.CommandLine()
 
 
 
-echo(os.environ['TOKEN'])
+@client.event
+@asyncio.coroutine
+def on_message(message):
+    echo(message)
+
+
+try:
+    token = os.environ['TOKEN']
+except KeyError:
+    # Not on server
+    quit
+
+client.run(token)
