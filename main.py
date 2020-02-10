@@ -58,7 +58,7 @@ setToDiscordCommandLine(CommandLine,"discordCommand")
 @asyncio.coroutine
 async def on_message(message):
   echo(message.content)
-  await CLIENT.send_message(message.channel, CommandLine.discordCommand(message))
+  await message.channel.send(CommandLine.discordCommand(message))
 
 
 # /----------------------
