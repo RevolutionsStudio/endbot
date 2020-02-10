@@ -4,14 +4,13 @@ import shlex
 # La classe de la ligne de commande
 class CommandLine():
 
-  def __init__(self,**kwargs):
+  def __init__(self,client,**kwargs):
     self.funct = []
+    self.client = client
     self.quit = False
     self.cmdReturn = ""
     self.vars = {}  
 
-    self.__msgStart = kwargs.get("start","Invite de commande par Cyprien Bourotte @Cypooos\nTapez 'help' pour la liste des commandes.")
-    self.__startSequenceCommands = kwargs.get("startSequenceCommands","")
     self.__msgUnknow = kwargs.get("unknow","La commande est inconnue.\nTapez 'help' pour obtenir la liste des commandes")
     self.__msgWrgParam = kwargs.get("wrongParameter","Le parametre $ doit etre $$")
     self.__paramList = kwargs.get("parameterList",["Vrai/Faux","du texte","un nombre","un float"])
@@ -26,13 +25,14 @@ class CommandLine():
   def setVars(self,kwargs):
     self.vars = kwargs
 
-  def addFunction(self,caller = None) -> "Methode de passage":
+  def addFunction(self,authGroup=None,caller = None) -> "Methode de passage":
     def inner(funct) -> "retourne la nouvelle fonction":
 
       def newFunct(*arg,**kwargs) -> "Nouvelle fonction":
         # On rajoute le code de tester si les arguments sont bons
         new_args = []
         i = 0
+
         for annot in list(funct.__annotations__.values()):
           
 
@@ -73,6 +73,7 @@ class CommandLine():
 
       # Ajout au dictionnaire de la fonction
       newFunct.caller = caller # ajout du contexte self
+      newFunct.authGroup = authGroup # ajout de la sécurité concernant le role à avoir pour la commande
       self.funct.append(newFunct)
       self.funct[self.funct.index(newFunct)].__name__ = funct.__annotations__.pop("return")
       self.funct[self.funct.index(newFunct)].__doc__ = funct.__doc__
@@ -81,41 +82,32 @@ class CommandLine():
       return newFunct # On retourne notre meilleure fonction.
     return inner
 
-  # Commande principale, menu du terminal
-  def menu(self):
-    if self.__debug: print("\n"*10)
-    print(self.__msgStart)
-    self.execute(self.__startSequenceCommands)
-    while not self.quit:
-      commandes_raw = input(self.activeSymbol)
-      #for x in commandes_raw.split("$"):
-      #self.vars[commandes_raw.split("$")]
-      # 
-      self.execute(commandes_raw)
 
-  def execute(self,commandes_raw):
+  def execute(self,commandes_raw,message):
     commandes = commandes_raw.split(";")
     for commande in commandes:
       trt_commande = shlex.split(commande)
-      self.cmdReturn = self.__command(trt_commande)
-    if self.cmdReturn != None: print(self.cmdReturn)
+      self.cmdReturn = self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
+    if self.cmdReturn != None: await message.channel.send(self.cmdReturn)
 
 
   # executer une commande
-  def __command(self,execute):
-    if isinstance(execute,str):execute = shlex.split(execute)
-    if execute == []: return None
-    returning = None
+  def __command(self,execute,userRole=[]):
+    if isinstance(execute,str):execute = shlex.split(execute) # if argument not in list, conversion to list
+
+    if execute == []: return None # is command is empty
+    returning = None 
     find = False
-    for funct in self.funct:
-      if funct.__name__.split(" ")[0] == execute[0]:
-        try:
-          if funct.caller: returning = funct(funct.caller,*execute[1:],**self.vars)
-          else:returning = funct(*execute[1:],**self.vars)
-        except AssertionError as err:
-          print("Erreur d'argument: "+str(err))
-        finally:
-          find =True
-    if not find:
-      returning = self.__msgUnknow
+    for funct in self.funct: # for every command register
+      if funct.__name__.split(" ")[0] == execute[0]: # Found the command
+        if funct.authGroup == None or funct.authGroup in userRole: # if role right to command AUTH
+          try:
+            if funct.caller: returning = funct(funct.caller,*execute[1:],**self.vars) # Call the function w/ the caller
+            else:returning = funct(*execute[1:],**self.vars) # call the function without
+          except AssertionError as err: # if argument error
+            print("Erreur d'argument: "+str(err))
+          finally:
+            find =True # we found the function
+    if not find: # if we havn't find the function
+      returning = self.__msgUnknow # echoing the error message
     return returning

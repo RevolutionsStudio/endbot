@@ -18,8 +18,8 @@ echo("--- App Started ---")
 import asyncio, discord
 CLIENT = discord.Client()
 
-import CommandLineGenerator
-CommandLine = CommandLineGenerator.CommandLine()
+import DiscordCommandLineGenerator
+CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT)
 
 
 # /----------------------
@@ -39,26 +39,13 @@ It just answer pong.
 # \----------------------
 
 
-def setToDiscordCommandLine(CL,name="discordCommand"):
-
-  def foo(self,message):
-    commandes = message.content.split(";")
-    self.vars
-    for commande in commandes:
-      trt_commande = shlex.split(commande)
-      self.cmdReturn = self.__command(trt_commande)
-    if self.cmdReturn != None: return self.cmdReturn
-
-  setattr(CL, name, foo)
-
-# Setup the command-line to be Discord compatible
-setToDiscordCommandLine(CommandLine,"discordCommand")
-
 @CLIENT.event
 @asyncio.coroutine
 async def on_message(message):
+  if message.content == "stop":
+    exit()
   echo(message.content)
-  await message.channel.send(discordCommand(CommandLine,message))
+  await message.channel.send(CommandLine.execute(message))
 
 
 
