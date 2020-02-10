@@ -9,8 +9,8 @@ echo("--- App Started ---")
 import asyncio, discord
 client = discord.Client()
 
-import CommandLineGenerator
-CommandLine = CommandLineGenerator.CommandLine()
+import DiscordCommandLineGenerator
+CommandLine = DiscordCommandLineGenerator.CommandLine()
 
 
 
@@ -24,6 +24,7 @@ try:
     token = os.environ['TOKEN']
 except KeyError:
     # Not on server
-    quit
+    echo("Quit because TOKEN not found.")
+    exit()
 
 client.run(token)
