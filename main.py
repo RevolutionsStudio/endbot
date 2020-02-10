@@ -13,7 +13,7 @@ def echo(*args):
   print(*args)
   sys.stdout.flush()
 
-echo("--- App Started ---")
+echo("Code Started")
 
 import asyncio, discord
 CLIENT = discord.Client()
@@ -38,11 +38,26 @@ def stop(**kwargs) -> "stop":
   """Stop the bot.\n To use in case of emergency."""
   quit()
 
+@CommandLine.addFunction()
+def echo(name:max,**kwargs) -> "echo *TEXT":
+  '''Affiche du texte.
+	'''
+  return name
+
+
+@CommandLine.addFunction()
+def grab(element:max,**kwargs) -> "grab [*TEXT]":
+  """Selectionne et affiche seulement les lignes contenant [*TEXT] à l'interieur, suite à l'execution d'une commande.
+Souvent à utillisé avec le séparateur de commande.
+	
+__Exemple :__ `help; grab ping`"""
+  return "\n".join([line for line in CommandLine.cmdReturn.split("\n") if element in line])
+
 
 @CommandLine.addFunction()
 def help(info:(str,""),**kwargs) -> "help [COMMAND|cmd]":
 	'''Affiche l'aide d'une commande'''
-	if info == "": return "__**Liste des fonctions :**__\n\n"+"\n".join(["> `"+fct.__name__+"`" for fct in CommandLine.funct])+"\n\nTapez 'help COMMANDE' pour plus d'informations sur une commande en particulier.\nTapez 'help cmd' pour les informations d'utillisation des commandes.*(complexe)*"
+	if info == "": return "__**Liste des fonctions :**__\n\n"+"\n".join(["> `"+fct.__name__+"`" for fct in CommandLine.funct])+"\n\nTapez `help COMMANDE` pour plus d'informations sur une commande en particulier.\nTapez `help cmd` pour les informations d'utillisation des commandes.*(complexe)*"
 
 	for funct in CommandLine.funct:
 		if funct.__name__.split(" ")[0] == info:return "**__AIDE pour "+funct.__name__.split(" ")[0]+":__**\n**Syntaxe:** `"+funct.__name__+"`\n"+"\n"+str(funct.__doc__)
@@ -70,9 +85,10 @@ async def on_message(message):
 
 @CLIENT.event
 async def on_ready():
-    echo('BOT LOGGED IN !')
-    echo("Username: "+CLIENT.user.name)
-    echo("ID: "+str(CLIENT.user.id))
+  await message.channel.send(CommandLine.execute(message))
+  echo('BOT LOGGED IN !')
+  echo("Username: "+CLIENT.user.name)
+  echo("ID: "+str(CLIENT.user.id))
 
 
 # /----------------------
