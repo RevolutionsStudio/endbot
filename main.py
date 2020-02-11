@@ -155,7 +155,7 @@ async def on_ready():
 
 
 try:
-  token = "NTczNTgzNDk4NzQ5ODA0NTQ0.XkHJcw.GtkUNo32jpo6OsYAXeIjNGk5BIg" # os.environ['TOKEN']
+  token = os.environ['TOKEN']
 except KeyError:
   # Not on server
   echo("Quit because TOKEN not found.")
