@@ -115,7 +115,7 @@ class CommandLine():
             else: # call the function without
               returning = await funct(*execute[1:],**self.vars) # if courotine, await it
           except AssertionError as err: # if argument error
-            echo("Erreur d'argument: "+str(err))
+            returning = "Erreur d'argument:\n"+str(err)
           finally:
             find =True # we found the function
     if not find: # if we havn't find the function
