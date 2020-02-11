@@ -28,6 +28,7 @@ class Config():
     self.mentionRole = {"rasylium":[667073497478070281], "revolutions":[667073638234849347], "rideos":[667073638234849347], "rogemus":[667073920003997706],"discord":[667072893439574026]}
 
 CONF = Config()
+
 # /----------------------
 # | Commands of bot
 # \----------------------
@@ -165,7 +166,9 @@ async def on_message(message):
         role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
         echo(x,CONF.mentionRole[x])
         await role.edit(mentionable=True)
+      yield from asyncio.sleep(2)
       await message.channel.send("__Mentions :__\n"+", ".join(["<@&"+str(CONF.roles[x])+">" for x in allMen]))
+      yield from asyncio.sleep(2)
       for x in allMen:
         role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
         await role.edit(mentionable=False)
