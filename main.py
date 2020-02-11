@@ -56,7 +56,7 @@ def ping(**kwargs) -> "ping":
   return "pong !"
 
 @CommandLine.addFunction("botmoderator")
-def stop(**kwargs) -> "stop":
+async def stop(**kwargs) -> "stop":
   """Stop the bot.\n To use in case of emergency."""
   await CommandLine.message.channel.send("Bye !")
   quit()
