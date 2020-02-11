@@ -104,7 +104,6 @@ async def on_message(message):
 
 @CLIENT.event
 async def on_ready():
-  await message.channel.send(CommandLine.execute(message))
   echo('BOT LOGGED IN !')
   echo("Username: "+CLIENT.user.name)
   echo("ID: "+str(CLIENT.user.id))
