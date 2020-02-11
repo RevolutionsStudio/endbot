@@ -38,9 +38,10 @@ def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogem
   '''Vous donne le role de notification
 	'''
   name = name.lower()
+  message = CL.message
   if name == "all":
     for x in CONF.roles.values():
-      message.author.add_roles(get(message.author.server.roles, id=x))
+      message.author.add_roles(discord.utils.get(message.author.server.roles, id=x))
     return "Tout les rôles ont été atribuées."
   try:
     role = CONF.roles[name]

@@ -35,10 +35,8 @@ class CommandLine():
         # On rajoute le code de tester si les arguments sont bons
         new_args = []
         i = 0
-        message = self.vars["msg"];
 
         for annot in list(funct.__annotations__.values()):
-          
 
           if annot == max:
             param = " ".join(list(arg)[i:])
@@ -89,7 +87,7 @@ class CommandLine():
 
   def execute(self,message):
     commandes = message.content.split(";")
-    self.vars["msg"] = message;
+    self.message = message
     for commande in commandes:
       trt_commande = shlex.split(commande)
       self.cmdReturn = self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
