@@ -166,9 +166,9 @@ async def on_message(message):
         role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
         echo(x,CONF.mentionRole[x])
         await role.edit(mentionable=True)
-      yield from asyncio.sleep(2)
+      await asyncio.sleep(2)
       await message.channel.send("__Mentions :__\n"+", ".join(["<@&"+str(CONF.roles[x])+">" for x in allMen]))
-      yield from asyncio.sleep(2)
+      await asyncio.sleep(2)
       for x in allMen:
         role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
         await role.edit(mentionable=False)
