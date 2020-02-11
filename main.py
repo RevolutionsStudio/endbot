@@ -21,17 +21,38 @@ CLIENT = discord.Client()
 import DiscordCommandLineGenerator
 CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT)
 
+class Config():
 
+  def __init__(self):
+    self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056}
+
+CONF = Config()
 # /----------------------
 # | Commands of bot
 # \----------------------
 
 
+
+@CommandLine.addFunction()
+def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogemus|all)":
+  '''Vous donne le role de notification
+	'''
+  name = name.lower()
+  if name == "all":
+    for x in CONF.roles.values():
+      message.author.add_roles(get(message.author.server.roles, id=x))
+    return "Tout les rôles ont été atribuées."
+  try:
+    role = CONF.roles[name]
+  except KeyError:
+    return "__Erreur:__ Le role `"+name+"` n'est pas dans la liste."
+  message.author.add_roles(get(message.author.server.roles, id=role))
+
+# ---- GENRAL COMMANDS ----
 @CommandLine.addFunction()
 def ping(**kwargs) -> "ping":
   """It just answer pong."""
   return "pong !"
-
 
 @CommandLine.addFunction("botmoderator")
 def stop(**kwargs) -> "stop":
@@ -39,11 +60,10 @@ def stop(**kwargs) -> "stop":
   quit()
 
 @CommandLine.addFunction()
-def echo(name:max,**kwargs) -> "echo *TEXT":
+def echoCMD(name:max,**kwargs) -> "echo *TEXT":
   '''Affiche du texte.
 	'''
   return name
-
 
 @CommandLine.addFunction()
 def grab(element:max,**kwargs) -> "grab [*TEXT]":
@@ -52,7 +72,6 @@ Souvent à utillisé avec le séparateur de commande.
 	
 __Exemple :__ `help; grab ping`"""
   return "\n".join([line for line in CommandLine.cmdReturn.split("\n") if element in line])
-
 
 @CommandLine.addFunction()
 def help(info:(str,""),**kwargs) -> "help [COMMAND|cmd]":
