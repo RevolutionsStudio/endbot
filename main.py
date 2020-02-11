@@ -56,9 +56,8 @@ def ping(**kwargs) -> "ping":
   return "pong !"
 
 @CommandLine.addFunction("botmoderator")
-async def stop(**kwargs) -> "stop":
+def stop(**kwargs) -> "stop":
   """Stop the bot.\n To use in case of emergency."""
-  await CommandLine.message.channel.send("Bye !")
   quit()
 
 @CommandLine.addFunction()
@@ -102,7 +101,8 @@ async def on_message(message):
   if message.author.id == CLIENT.user.id: return
   if len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]
-    await message.channel.send(CommandLine.execute(message))
+    ret = CommandLine.execute(message)
+    if ret != None and ret != "":await message.channel.send(ret)
 
 @CLIENT.event
 async def on_ready():
