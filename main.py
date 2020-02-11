@@ -34,40 +34,51 @@ CONF = Config()
 
 
 @CommandLine.addFunction()
-def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogemus|all)":
-  '''Vous donne le role de notification
+async def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogemus|all)":
+  '''Vous donne le role de notification.
 	'''
   name = name.lower()
   message = CommandLine.message
   if name == "all":
     for x in CONF.roles.values():
-      message.author.add_roles(discord.utils.get(message.author.guild.roles, id=x))
+      await message.author.add_roles(discord.utils.get(message.author.guild.roles, id=x))
     return "Tout les rôles ont été atribuées."
   try:
     role = CONF.roles[name]
   except KeyError:
     return "__Erreur:__ Le role `"+name+"` n'est pas dans la liste."
-  message.author.add_roles(discord.utils.get(message.author.guild.roles, id=role))
+  role = discord.utils.get(message.author.guild.roles, id=role)
+  if role not in message.author.roles:
+    await message.author.add_roles(role)
+    return "Le role <@&"+str(role.id)+"> vous a été ajouté !"
+  else:
+    await message.author.remove_roles(role)
+    return "Le role <@&"+str(role.id)+"> vous a été retiré !"
+# ---- DEBUGS COMMAND ----
+
+
+@CommandLine.addFunction()
+async def ping(**kwargs) -> "ping":
+  """It just say pong !"""
+  await CommandLine.message.channel.send("Pong !")
+
 
 # ---- GENRAL COMMANDS ----
-@CommandLine.addFunction()
-def ping(**kwargs) -> "ping":
-  """It just answer pong."""
-  return "pong !"
 
 @CommandLine.addFunction("botmoderator")
-def stop(**kwargs) -> "stop":
+async def stop(**kwargs) -> "stop":
   """Stop the bot.\n To use in case of emergency."""
+  await CommandLine.message.channel.send("Bye !")
   quit()
 
 @CommandLine.addFunction()
-def echoCMD(name:max,**kwargs) -> "echo *TEXT":
+async def echoCMD(name:max,**kwargs) -> "echo *TEXT":
   '''Affiche du texte.
 	'''
   return name
 
 @CommandLine.addFunction()
-def grab(element:max,**kwargs) -> "grab [*TEXT]":
+async def grab(element:max,**kwargs) -> "grab [*TEXT]":
   """Selectionne et affiche seulement les lignes contenant [*TEXT] à l'interieur, suite à l'execution d'une commande.
 Souvent à utillisé avec le séparateur de commande.
 	
@@ -75,7 +86,7 @@ __Exemple :__ `help; grab ping`"""
   return "\n".join([line for line in CommandLine.cmdReturn.split("\n") if element in line])
 
 @CommandLine.addFunction()
-def help(info:(str,""),**kwargs) -> "help [COMMAND|cmd]":
+async def help(info:(str,""),**kwargs) -> "help [COMMAND|cmd]":
 	'''Affiche l'aide d'une commande'''
 	if info == "": return "__**Liste des fonctions :**__\n\n"+"\n".join(["> `"+fct.__name__+"`" for fct in CommandLine.funct])+"\n\nTapez `help COMMANDE` pour plus d'informations sur une commande en particulier.\nTapez `help cmd` pour les informations d'utillisation des commandes.*(complexe)*"
 
@@ -101,8 +112,8 @@ async def on_message(message):
   if message.author.id == CLIENT.user.id: return
   if len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]
-    ret = CommandLine.execute(message)
-    if ret != None and ret != "":await message.channel.send(ret)
+    ret = await CommandLine.execute(message)
+    if ret != None and ret != "": await message.channel.send(ret)
 
 @CLIENT.event
 async def on_ready():

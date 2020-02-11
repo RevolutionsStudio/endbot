@@ -1,5 +1,6 @@
 import shlex
 import sys
+import asyncio
 
 def echo(*args):
   print(*args)
@@ -85,12 +86,12 @@ class CommandLine():
     return inner
 
 
-  def execute(self,message):
+  async def execute(self,message):
     commandes = message.content.split(";")
     self.message = message
     for commande in commandes:
       trt_commande = shlex.split(commande)
-      self.cmdReturn = self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
+      self.cmdReturn = await self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
     if self.cmdReturn != None: return self.cmdReturn
 
   def start(self):
@@ -98,7 +99,7 @@ class CommandLine():
     print(self.__msgStart)
 
   # executer une commande
-  def __command(self,execute,userRole=[]):
+  async def __command(self,execute,userRole=[]):
     if isinstance(execute,str):execute = shlex.split(execute) # if argument not in list, conversion to list
 
     if execute == []: return None # is command is empty
@@ -109,8 +110,10 @@ class CommandLine():
         if funct.authGroup == None or funct.authGroup in userRole: # if role right to command AUTH
           echo(funct)
           try:
-            if funct.caller: returning = funct(funct.caller,*execute[1:],**self.vars) # Call the function w/ the caller
-            else:returning = funct(*execute[1:],**self.vars) # call the function without
+            if funct.caller: # Call the function w/ the caller
+              returning = await funct(funct.caller,*execute[1:],**self.vars)
+            else: # call the function without
+              returning = await funct(*execute[1:],**self.vars) # if courotine, await it
           except AssertionError as err: # if argument error
             echo("Erreur d'argument: "+str(err))
           finally:
