@@ -162,16 +162,19 @@ async def on_message(message):
           if x in [y.id for y in message.author.roles]:
             allMen.append(eleMentionable);break
     if allMen != []:
+      t = []
       for x in allMen:
         role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
-        echo(x,CONF.mentionRole[x],role.mention)
-        await role.edit(mentionable=True)
-      await asyncio.sleep(2)
-      await message.channel.send("__Mentions :__\n"+", ".join(["<@&"+str(CONF.roles[x])+">" for x in allMen]))
-      await asyncio.sleep(2)
+        echo(x,role.mention)
+        t.append(role.mention)
+        #await role.edit(mentionable=True)
+      """ await asyncio.sleep(2) """
+      #await message.channel.send("__Mentions :__\n"+", ".join(["<@&"+str(CONF.roles[x])+">" for x in allMen]))
+      await message.channel.send("__Mentions :__\n"+", ".join(t))
+      """ await asyncio.sleep(2)
       for x in allMen:
         role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
-        await role.edit(mentionable=False)
+        await role.edit(mentionable=False) """
 
 
 @CLIENT.event
