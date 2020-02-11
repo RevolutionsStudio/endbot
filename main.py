@@ -24,17 +24,18 @@ CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT)
 class Config():
 
   def __init__(self):
-    self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056}
+    self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056,"discord":676757120003080223}
+    self.mentionRole = {"rasylium":[667073497478070281], "revolutions":[667073638234849347], "rideos":[667073638234849347], "rogemus":[667073920003997706],"discord":[667072893439574026]}
 
 CONF = Config()
 # /----------------------
 # | Commands of bot
 # \----------------------
 
-
+# ---- General commands ----
 
 @CommandLine.addFunction()
-async def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogemus|all)":
+async def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogemus|discord|all)":
   '''Vous donne un role de notification.
 Si un role est déja présent, il sera retirer *(sauf dans le cas de `notif all`, ou quoiqu'il ce passe, tout les roles sont ajouter)*.
 	'''
@@ -56,6 +57,7 @@ Si un role est déja présent, il sera retirer *(sauf dans le cas de `notif all`
     await message.author.remove_roles(role)
     return "Le role <@&"+str(role.id)+"> vous a été retiré !"
 
+
 # ---- DEBUGS COMMAND ----
 
 @CommandLine.addFunction("botmoderator")
@@ -73,6 +75,15 @@ async def ping(**kwargs) -> "ping":
   """Répond `pong !`
 Répond `pong !`"""
   await CommandLine.message.channel.send("Pong !")
+
+@CommandLine.addFunction()
+async def invite(**kwargs) -> "invite":
+  """Donne le liens d'invitation
+Donne le liens d'invitation."""
+  embed=discord.Embed(title="Invitation", url="https://discord.gg/fFhrv8a", color=0xf2ff06)
+  embed.set_thumbnail(url="https://www.stickpng.com/assets/images/5897ac11cba9841eabab6165.png")
+  embed.add_field(name="__**Lien :**__", value="https://discord.gg/fFhrv8a", inline=True)
+  await CommandLine.message.channel.send(embed=embed)
 
 
 # ---- GENERAL COMMANDS ----
@@ -136,11 +147,29 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 
 @CLIENT.event
 async def on_message(message):
-  if message.author.id == CLIENT.user.id: return
-  if len(message.content)>2 and message.content[0] == "!":
+  if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
+  elif len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]
     ret = await CommandLine.execute(message)
     if ret != None and ret != "": await message.channel.send(ret)
+  
+  if "mention_" in message.content:
+    allMen = []
+    for eleMentionable in CONF.mentionRole.keys():
+      if "mention_"+eleMentionable in message.content:
+        for x in CONF.mentionRole[eleMentionable]:
+          if x in [y.id for y in message.author.roles]:
+            allMen.append(eleMentionable);break
+    if allMen != []:
+      for x in allMen:
+        role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
+        echo(x,CONF.mentionRole[x])
+        await role.edit(mentionable=True)
+      await message.channel.send("__Mentions :__\n"+", ".join(["<@&"+str(CONF.roles[x])+">" for x in allMen]))
+      for x in allMen:
+        role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
+        await role.edit(mentionable=False)
+
 
 @CLIENT.event
 async def on_ready():
