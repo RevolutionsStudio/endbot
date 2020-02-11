@@ -41,13 +41,13 @@ def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogem
   message = CommandLine.message
   if name == "all":
     for x in CONF.roles.values():
-      message.author.add_roles(discord.utils.get(message.author.server.roles, id=x))
+      message.author.add_roles(discord.utils.get(message.author.guild.roles, id=x))
     return "Tout les rôles ont été atribuées."
   try:
     role = CONF.roles[name]
   except KeyError:
     return "__Erreur:__ Le role `"+name+"` n'est pas dans la liste."
-  message.author.add_roles(get(message.author.server.roles, id=role))
+  message.author.add_roles(discord.utils.get(message.author.guild.roles, id=role))
 
 # ---- GENRAL COMMANDS ----
 @CommandLine.addFunction()
@@ -58,6 +58,7 @@ def ping(**kwargs) -> "ping":
 @CommandLine.addFunction("botmoderator")
 def stop(**kwargs) -> "stop":
   """Stop the bot.\n To use in case of emergency."""
+  await CommandLine.message.channel.send("Bye !")
   quit()
 
 @CommandLine.addFunction()
