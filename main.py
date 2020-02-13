@@ -29,8 +29,8 @@ class Config():
   
   def isAdmin(user):
     returning = False
-    for x in [(y.name.lower() in self.adminRoles) for y in message.author.roles]:
-      if x:returning = True;
+    for x in [y.name.lower() for y in message.author.roles]:
+      if x in self.adminRoles:returning = True;
     return returning
 
 
@@ -97,7 +97,7 @@ Donne le liens d'invitation."""
 
 # ---- GENERAL COMMANDS ----
 
-@CommandLine.addFunction("botmoderator")
+@CommandLine.addFunction(CONF.adminRoles)
 async def stop(**kwargs) -> "stop":
   """Arrête le bot.
 A utilliser en cas d'urgence: spam, crash, ou incontrollable.
