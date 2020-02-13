@@ -25,7 +25,6 @@ class Config():
 
   def __init__(self):
     self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056,"discord":676757120003080223}
-    self.mentionRole = {"rasylium":[667073497478070281], "revolutions":[667073638234849347], "rideos":[667073638234849347], "rogemus":[667073920003997706],"discord":[667072893439574026]}
 
 CONF = Config()
 
@@ -154,25 +153,6 @@ async def on_message(message):
     ret = await CommandLine.execute(message)
     if ret != None and ret != "": await message.channel.send(ret)
   
-  if "mention_" in message.content:
-    allMen = []
-    for eleMentionable in CONF.mentionRole.keys():
-      if "mention_"+eleMentionable in message.content:
-        for x in CONF.mentionRole[eleMentionable]:
-          if x in [y.id for y in message.author.roles]:
-            allMen.append(eleMentionable);break
-    if allMen != []:
-      t = []
-      for x in allMen:
-        role = discord.utils.get(message.guild.roles, id=CONF.roles[x])
-        echo(x,role.mention)
-        t.append(role.mention)
-        await role.edit(mentionable=True)
-      await asyncio.sleep(10)
-      await message.channel.send("__Mentions :__\n"+", ".join(t))
-      await asyncio.sleep(10)
-      for x in t:
-        await x.edit(mentionable=False)
 
 
 @CLIENT.event
