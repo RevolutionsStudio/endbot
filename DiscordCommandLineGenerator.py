@@ -1,7 +1,7 @@
 import shlex
 import sys
 import asyncio
-
+import discord 
 def echo(*args):
   print(*args)
   sys.stdout.flush()
@@ -89,7 +89,7 @@ class CommandLine():
 
   async def execute(self,message):
     commandes = message.content.split(";")
-    if len(commandes) > 4 and self.CONF.isAdmin(message.author):
+    if len(commandes) > 4 and not self.CONF.isAdmin(message.author):
       embed=discord.Embed(title="TUTUTUTUTU.", description="Vous utillisez trop de commande.\nLa limite est de 4 ", color=0xfb0013)
       embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
       await message.channel.send(embed=embed)
