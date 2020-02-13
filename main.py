@@ -101,7 +101,7 @@ Répond `pong !`"""
 async def speak(text:max,**kwargs) -> "speak *MESSAGE":
   """Parle à ta place 
 Tapez un message et il l'envoie !"""
-  embed=discord.Embed(title="Message de "+message.author.name,description=text, color=0xf2ff06)
+  embed=discord.Embed(title="Message de "+CommandLine.message.author.name,description=text, color=0xf2ff06)
   await CommandLine.message.channel.send(embed=embed)
   await CLIENT.delete_message(message)
 
