@@ -176,6 +176,7 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 
 @CLIENT.event
 async def on_message(message):
+  echo(message.author.name,message.content)
   if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
   elif len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]

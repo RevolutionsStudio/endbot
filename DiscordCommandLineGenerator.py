@@ -118,7 +118,6 @@ class CommandLine():
           for x in [y.name.lower() for y in self.message.author.roles]:
             if x in funct.authGroup:allow = True;
         if allow: # if role right to command AUTH
-          echo(funct)
           try:
             if funct.caller: # Call the function w/ the caller
               returning = await funct(funct.caller,*execute[1:],**self.vars)
@@ -132,8 +131,7 @@ class CommandLine():
           embed=discord.Embed(title="Vous n'avez pas accès à cette commande.", description="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()), color=0xfb0013)
           embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
           await message.channel.send(embed=embed)
-          return
-      return
+          return 
     if not find: # if we havn't find the function
       returning = self.__msgUnknow # echoing the error message
     return returning
