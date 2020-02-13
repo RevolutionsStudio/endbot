@@ -127,7 +127,13 @@ class CommandLine():
           except AssertionError as err: # if argument error
             returning = "Erreur d'argument:\n"+str(err)
           finally:
-            find =True # we found the function
+            find = True # we found the function
+        else:
+          embed=discord.Embed(title="Vous n'avez pas accès à cette commande.", description="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()), color=0xfb0013)
+          embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
+          await message.channel.send(embed=embed)
+          return
+      return
     if not find: # if we havn't find the function
       returning = self.__msgUnknow # echoing the error message
     return returning
