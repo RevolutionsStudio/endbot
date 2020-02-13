@@ -27,7 +27,7 @@ class Config():
     self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056,"discord":676757120003080223}
     self.adminRoles = ["botmoderator","administrateurs"]
   
-  def isAdmin(user):
+  def isAdmin(self,user):
     returning = False
     for x in [y.name.lower() for y in message.author.roles]:
       if x in self.adminRoles:returning = True;
