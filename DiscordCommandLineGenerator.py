@@ -107,7 +107,11 @@ class CommandLine():
     find = False
     for funct in self.funct: # for every command register
       if funct.__name__.split(" ")[0] == execute[0]: # Found the command
-        if funct.authGroup == None or funct.authGroup in userRole: # if role right to command AUTH
+        allow = funct.authGroup == None
+        if not allow:
+          for x in [(y.name.lower() in funct.authGroup) for y in message.author.roles]:
+            if x:allow = True;
+        if allow: # if role right to command AUTH
           echo(funct)
           try:
             if funct.caller: # Call the function w/ the caller

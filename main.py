@@ -25,6 +25,15 @@ class Config():
 
   def __init__(self):
     self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056,"discord":676757120003080223}
+    self.adminRoles = ["botmoderator","administrateurs"]
+  
+  def isAdmin(user):
+    returning = False
+    for x in [(y.name.lower() in self.adminRoles) for y in message.author.roles]:
+      if x:returning = True;
+    return returning
+
+
 
 CONF = Config()
 
@@ -60,7 +69,7 @@ Si un rôle est déja présent, il sera retirés *(sauf dans le cas de `notif al
 
 # ---- DEBUGS COMMAND ----
 
-@CommandLine.addFunction("botmoderator")
+@CommandLine.addFunction(["botmoderator"])
 async def evaluate(commands:max,**kwargs) -> "eval *PYTHON":
   """Execute du code python.
 Execute du code python.
@@ -78,7 +87,7 @@ Répond `pong !`"""
 
 @CommandLine.addFunction()
 async def invite(**kwargs) -> "invite":
-  """Donne le liens d'invitation
+  """Donne le lien d'invitation
 Donne le liens d'invitation."""
   embed=discord.Embed(title="Invitation", url="https://discord.gg/fFhrv8a", color=0xf2ff06)
   embed.set_thumbnail(url="https://www.stickpng.com/assets/images/5897ac11cba9841eabab6165.png")
@@ -90,7 +99,7 @@ Donne le liens d'invitation."""
 
 @CommandLine.addFunction("botmoderator")
 async def stop(**kwargs) -> "stop":
-  """Arrete le bot.
+  """Arrête le bot.
 A utilliser en cas d'urgence: spam, crash, ou incontrollable.
 Prévenir <@349114853333663746> en cas de problème."""
   await CommandLine.message.channel.send("Bye !")
@@ -109,6 +118,7 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     embed_cmdUti.add_field(name="Nom", value="\n".join(["`"+fct.__name__.split(" ")[0]+"`" for fct in CommandLine.funct if fct.authGroup == None]), inline=True)
     embed_cmdUti.add_field(name="Description", value="\n".join([fct.__doc__.split("\n")[0] for fct in CommandLine.funct if fct.authGroup == None]), inline=True)
 
+
     embed_cmdAdm=discord.Embed(title="__Liste des commandes administrateurs__", color=0xfb0013)
 
     embed_cmdAdm.add_field(name="Nom", value="\n".join(["`"+fct.__name__.split(" ")[0]+"`" for fct in CommandLine.funct if fct.authGroup != None]), inline=True)
@@ -118,8 +128,8 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     embed_cmdAdm.set_thumbnail(url="https://media3.giphy.com/media/B7o99rIuystY4/source.gif")
     embed_cmdAdm.set_footer(text="Le bot EndBot a été créé par Cyprien Bourotte, du studio Révolutions")
     await message.channel.send(embed=embed_cmdUti)
-    await message.channel.send(embed=embed_cmdAdm)
-    return "Je t'incite à faire `!help COMMANDE` pour plus d'infos."
+    if CONF.isAdmin(message.author):await message.channel.send(embed=embed_cmdAdm)
+    return "Je t'incite à faire `!help COMMANDE` pour plus d'infos, ou encore `!help cmd` pour des informations complémentaire"
 
   for funct in CommandLine.funct:
     if funct.__name__.split(" ")[0] == info:
@@ -128,7 +138,7 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
       embed.set_author(name="Aide")
       embed.set_thumbnail(url="https://media1.giphy.com/media/IQ47VvDzlzx9S/giphy.gif")
       embed.add_field(name="Syntaxe :", value="`"+funct.__name__+"`", inline=False)
-      if funct.authGroup != None: embed.set_footer(text="Cette commande n'est utilisable seulement avec le role "+str(funct.authGroup.upper()))
+      if funct.authGroup != None: embed.set_footer(text="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()))
       await message.channel.send(embed=embed)
       return 
   if info.lower() == "cmd":
