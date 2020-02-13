@@ -109,7 +109,7 @@ class CommandLine():
       if funct.__name__.split(" ")[0] == execute[0]: # Found the command
         allow = funct.authGroup == None
         if not allow:
-          for x in [y.name.lower() for y in message.author.roles]:
+          for x in [y.name.lower() for y in self.message.author.roles]:
             if x in funct.authGroup:allow = True;
         if allow: # if role right to command AUTH
           echo(funct)
