@@ -98,6 +98,15 @@ Répond `pong !`"""
   await CommandLine.message.channel.send("Pong !")
 
 @CommandLine.addFunction()
+async def speak(text:max,**kwargs) -> "speak *MESSAGE":
+  """Parle à ta place 
+Tapez un message et il l'envoie !"""
+  embed=discord.Embed(title="Message de "+message.author.name,description=text, color=0xf2ff06)
+  await CommandLine.message.channel.send(embed=embed)
+  await CLIENT.delete_message(message)
+
+
+@CommandLine.addFunction()
 async def invite(**kwargs) -> "invite":
   """Donne le lien d'invitation
 Donne le liens d'invitation."""
