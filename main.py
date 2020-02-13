@@ -29,7 +29,7 @@ class Config():
   
   def isAdmin(self,user):
     returning = False
-    for x in [y.name.lower() for y in message.author.roles]:
+    for x in [y.name.lower() for y in user.roles]:
       if x in self.adminRoles:returning = True;
     return returning
 
