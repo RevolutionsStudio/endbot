@@ -36,8 +36,8 @@ CONF = Config()
 
 @CommandLine.addFunction()
 async def notification(name:str,**kwargs) -> "notif (Rasylium|Revolutions|Rideos|Rogemus|discord|all)":
-  '''Vous donne un role de notification.
-Si un role est déja présent, il sera retirer *(sauf dans le cas de `notif all`, ou quoiqu'il ce passe, tout les roles sont ajouter)*.
+  '''Enlève ou rajoute un rôle.
+Si un rôle est déja présent, il sera retirés *(sauf dans le cas de `notif all`, ou quoiqu'il ce passe, tout les rôles sont ajoutés)*.
 	'''
   name = name.lower()
   message = CommandLine.message
@@ -119,7 +119,7 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     embed_cmdAdm.set_footer(text="Le bot EndBot a été créé par Cyprien Bourotte, du studio Révolutions")
     await message.channel.send(embed=embed_cmdUti)
     await message.channel.send(embed=embed_cmdAdm)
-    return 
+    return "Je t'incite à faire `!help COMMANDE` pour plus d'infos."
 
   for funct in CommandLine.funct:
     if funct.__name__.split(" ")[0] == info:
