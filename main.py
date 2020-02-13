@@ -18,8 +18,6 @@ echo("Code Started")
 import asyncio, discord
 CLIENT = discord.Client()
 
-import DiscordCommandLineGenerator
-CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT)
 
 class Config():
 
@@ -43,6 +41,10 @@ class Config():
 
 
 CONF = Config()
+
+import DiscordCommandLineGenerator
+CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT,CONF)
+
 
 # /----------------------
 # | Commands of bot
