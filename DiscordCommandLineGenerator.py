@@ -88,9 +88,14 @@ class CommandLine():
 
   async def execute(self,message):
     commandes = message.content.split(";")
+    if len(commandes) > 4 and CONF.isAdmin(message.author):
+      embed=discord.Embed(title="TUTUTUTUTU.", description="Vous utillisez trop de commande.\nLa limite est de 4 ", color=0xfb0013)
+      embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
+      await message.channel.send(embed=embed)
+      return
     self.message = message
     for commande in commandes:
-      trt_commande = shlex.split(commande)
+      trt_commande = commande.split(" ")
       self.cmdReturn = await self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
     if self.cmdReturn != None: return self.cmdReturn
 
@@ -100,7 +105,7 @@ class CommandLine():
 
   # executer une commande
   async def __command(self,execute,userRole=[]):
-    if isinstance(execute,str):execute = shlex.split(execute) # if argument not in list, conversion to list
+    if isinstance(execute,str):execute = execute.split(" ") # if argument not in list, conversion to list
 
     if execute == []: return None # is command is empty
     returning = None 
