@@ -15,7 +15,7 @@ class CommandLine():
     self.cmdReturn = ""
     self.vars = {}  
 
-    self.__msgUnknow = kwargs.get("unknow","La commande est inconnue.\nTapez 'help' pour obtenir la liste des commandes")
+    self.__msgUnknow = kwargs.get("unknow","La commande est inconnue.\nTapez `!help` pour obtenir la liste des commandes")
     self.__msgWrgParam = kwargs.get("wrongParameter","Le parametre $ doit etre $$")
     self.__paramList = kwargs.get("parameterList",["Vrai/Faux","du texte","un nombre","un float"])
     self.__haveMsgError = kwargs.get("commandErrorFeedback",True)

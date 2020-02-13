@@ -32,6 +32,13 @@ class Config():
     for x in [y.name.lower() for y in user.roles]:
       if x in self.adminRoles:returning = True;
     return returning
+  
+  def canBeUse(self,funct,user):
+    allow = funct.authGroup == None
+    if not allow:
+      for x in [y.name.lower() for y in user.roles]:
+        if x in funct.authGroup:allow = True;
+    return allow
 
 
 
@@ -76,8 +83,11 @@ Execute du code python.
 **A éviter !** une fausse manip pourrais casser le bot ou détruire des données.
 **IL N'Y A PAS DE RETOUR EN ARRIERE POSSIBLE**
 Prévenir <@349114853333663746> en cas de problème."""
-  
-  return "__Return:__\n```python\n"+eval(commands)+"```\n"
+  try:
+    ret = eval(commands)
+  except:
+    ret = sys.exc_info()[0]
+  return "__Return:__\n```python\n"+ret+"```\n"
 
 @CommandLine.addFunction()
 async def ping(**kwargs) -> "ping":
@@ -133,14 +143,21 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 
   for funct in CommandLine.funct:
     if funct.__name__.split(" ")[0] == info:
-      # HELP FUNCTION
-      embed=discord.Embed(title="Commande : "+funct.__name__.split(" ")[0], description=str("\n".join(funct.__doc__.split("\n")[1:])), color=0x80ffff)
-      embed.set_author(name="Aide")
-      embed.set_thumbnail(url="https://media1.giphy.com/media/IQ47VvDzlzx9S/giphy.gif")
-      embed.add_field(name="Syntaxe :", value="`"+funct.__name__+"`", inline=False)
-      if funct.authGroup != None: embed.set_footer(text="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()))
-      await message.channel.send(embed=embed)
-      return 
+      if CONF.canBeUse(funct,message.author):
+        # HELP FUNCTION
+        embed=discord.Embed(title="Commande : "+funct.__name__.split(" ")[0], description=str("\n".join(funct.__doc__.split("\n")[1:])), color=0x80ffff)
+        embed.set_author(name="Aide")
+        embed.set_thumbnail(url="https://media1.giphy.com/media/IQ47VvDzlzx9S/giphy.gif")
+        embed.add_field(name="Syntaxe :", value="`"+funct.__name__+"`", inline=False)
+        if funct.authGroup != None: embed.set_footer(text="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()))
+        await message.channel.send(embed=embed)
+        return 
+      else:
+        # DONT ALLOW
+        embed=discord.Embed(title="Vous n'avez pas accès à cette commande.", description="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()), color=0xfb0013)
+        embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
+        await message.channel.send(embed=embed)
+        return
   if info.lower() == "cmd":
     embed=discord.Embed(title="__Aide sur l'utillisation des commandes__", description="Les messages qui sont des commandes doivent commancer par `!`\nVous pouvez aussi executer plusieurs commandes à la suite en utillisant le séparateur `;`.\nSeulement le retour de la dernière commande sera affiché.", color=0xfbe800)
     embed.add_field(name="Exemple :", value="`!notif all;notif rogemus` : Donera tout les rôles sauf le rôle Rogemus", inline=False)
@@ -148,7 +165,7 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     embed.set_footer(text="Le bot EndBot a été créé par Cyprien Bourotte, du studio Révolutions.")
     await message.channel.send(embed=embed)
     return 
-  return "Commande pour l'aide inconnue.\nTapez `help` pour la liste des commandes.\nTapez `help cmd` pour les informations d'utillisation des commandes."
+  return "Commande pour l'aide inconnue.\nTapez `!help` pour la liste des commandes.\nTapez `help cmd` pour les informations d'utillisation des commandes."
 
 # /----------------------
 # | Bot
