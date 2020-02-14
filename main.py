@@ -152,7 +152,7 @@ Prévenir <@349114853333663746> en cas de problème."""
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X commandes.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
-  async for message in CommandLine.message.channel.history(limit=nbMsg):
+  async for message in CommandLine.message.channel.history(limit=int(nbMsg)):
     await message.delete()
   
 
