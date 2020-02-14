@@ -27,7 +27,7 @@ class Log():
         if log_type in self.log_levels or "ALL" in self.log_levels:
             print("["+log_type+"] "+str(classCaller)+str(methodCaller)+": "+str(message))
             sys.stdout.flush()
-        await self.channel.send("`"+log+"`")
+        await self.channel.send(""+log+"")
 
     async def debug(self,message):await self.__out(message,"DEBUG")
     async def info(self,message):await self.__out(message,"INFO")
