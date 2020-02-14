@@ -235,7 +235,7 @@ async def checkCommand(message):
 
 @CLIENT.event
 async def on_message(message):
-  if message.author.id != CLIENT.user.id: await LOG.message("<@!"+str(message.author.id)+"> "+message.content)
+  if message.author.id != CLIENT.user.id: await LOG.message("`<@!"+str(message.author.id)+">` - "+message.content)
   if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
 
 
