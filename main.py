@@ -41,7 +41,7 @@ class Config():
     return allow
 
   async def send_warn(self,title,reason,message):
-    await LOG.warn("de <@"+str(message.author.id+)+">, titre: "+title+"\nReason: "+reason)
+    await LOG.warn("de <@"+str(message.author.id)+">, titre: "+title+"\nReason: "+reason)
     embed=discord.Embed(title=title, description=reason, color=0xfb0013)
     embed.set_author(name="TUTUTUTU")
     embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
