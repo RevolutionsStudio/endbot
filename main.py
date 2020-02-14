@@ -49,7 +49,7 @@ class Config():
     to_destroy = await message.channel.send(embed=embed)
     await message.delete()
     loop = asyncio.get_running_loop()
-    await loop.run_in_executor(None, delete(to_destroy,3))
+    loop.run_in_executor(None, await delete(to_destroy,3))
 
 CONF = Config()
 
@@ -152,6 +152,8 @@ Prévenir <@349114853333663746> en cas de problème."""
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X messages.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le nombre message."""
+  try: nbMsg = int(nbMsg)
+  except ValueError: raise AssertionError("Le paramètre doit etre un entier.")
   nbMsg += 1
   async for message in CommandLine.message.channel.history(limit=int(nbMsg)):
     await message.delete()
