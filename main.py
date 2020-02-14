@@ -6,8 +6,13 @@
 # \----------------------
 
 
+#  p1 = Process(target=func1)
+#  p1.start()
+
 import sys, os
 import shlex
+
+from multiprocessing import Process
 
 def echo(*args):
   print(*args)
@@ -56,6 +61,14 @@ CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT,CONF)
 # | Commands of bot
 # \----------------------
 
+# ---- COMMAND'S COMMAND ---
+async def delete(message,time):
+  await asyncio.sleep(time)
+  await message.delete()
+
+
+
+
 # ---- General commands ----
 
 @CommandLine.addFunction()
@@ -82,8 +95,17 @@ Si un rôle est déja présent, il sera retirés *(sauf dans le cas de `notif al
     return "Le role <@&"+str(role.id)+"> vous a été retiré !"
 
 
-# ---- DEBUGS COMMAND ----
+@CommandLine.addFunction()
+async def invite(**kwargs) -> "invite":
+  """Donne le lien d'invitation
+Donne le liens d'invitation."""
+  embed=discord.Embed(title="Invitation", url="https://discord.gg/fFhrv8a", color=0xf2ff06)
+  embed.set_thumbnail(url="https://www.stickpng.com/assets/images/5897ac11cba9841eabab6165.png")
+  embed.add_field(name="__**Lien :**__", value="https://discord.gg/fFhrv8a", inline=True)
+  await CommandLine.message.channel.send(embed=embed)
 
+
+# ---- DEBUGS COMMAND ----
 @CommandLine.addFunction(["botmoderator"])
 async def evaluate(commands:max,**kwargs) -> "eval *PYTHON":
   """Execute du code python.
@@ -96,6 +118,7 @@ Prévenir <@349114853333663746> en cas de problème."""
   except:
     ret = sys.exc_info()[0]
   return "__Return:__\n```python\n"+ret+"```\n"
+
 
 @CommandLine.addFunction()
 async def ping(**kwargs) -> "ping":
@@ -112,18 +135,8 @@ Tapez un message et il l'envoie !"""
   await CommandLine.message.delete()
 
 
-@CommandLine.addFunction()
-async def invite(**kwargs) -> "invite":
-  """Donne le lien d'invitation
-Donne le liens d'invitation."""
-  embed=discord.Embed(title="Invitation", url="https://discord.gg/fFhrv8a", color=0xf2ff06)
-  embed.set_thumbnail(url="https://www.stickpng.com/assets/images/5897ac11cba9841eabab6165.png")
-  embed.add_field(name="__**Lien :**__", value="https://discord.gg/fFhrv8a", inline=True)
-  await CommandLine.message.channel.send(embed=embed)
 
-
-# ---- GENERAL COMMANDS ----
-
+# ---- ADMINS COMMANDS ----
 @CommandLine.addFunction(CONF.adminRoles)
 async def stop(**kwargs) -> "stop":
   """Arrête le bot.
@@ -132,6 +145,17 @@ Prévenir <@349114853333663746> en cas de problème."""
   await CommandLine.message.channel.send("Bye !")
   quit()
 
+@CommandLine.addFunction(CONF.adminRoles)
+async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
+  """Supprimme X commandes.
+Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
+  p1 = Process(target=delete, args=(CommandLine.message,2))
+  p.start()
+  p.join()
+
+
+
+# ---- HELP COMMAND ----
 @CommandLine.addFunction()
 async def help(info:(str,""),**kwargs) -> "help [COMMAND|cmd]":
   '''Affiche l'aide d'une commande.
@@ -186,16 +210,16 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 
 
 
+# /----------------------
+# | Bot
+# \----------------------
+
 async def checkCommand(message):
   if CONF.isAdmin(message.author):return True
   if "\n" in message.content:await CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message);return False
   if len(message.content)>200:await CONF.send_warn("Les commandes sont en moins de 200 charactères !","Encore, ça fais beaucoup là non ?\nTu en as tant besoin que cela ?",message);return False
   if len(message.content.split(";")) > 4:await CONF.send_warn("Vous utillisez trop de commandes.","La limite est de 4.\nTu en as tant besoin que cela ?",message);return False
   return True
-
-# /----------------------
-# | Bot
-# \----------------------
 
 
 @CLIENT.event
