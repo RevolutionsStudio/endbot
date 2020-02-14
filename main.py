@@ -150,8 +150,9 @@ Prévenir <@349114853333663746> en cas de problème."""
 
 @CommandLine.addFunction(CONF.adminRoles)
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
-  """Supprimme X commandes.
-Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
+  """Supprimme X messages.
+Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le nombre message."""
+  nbMsg += 1
   async for message in CommandLine.message.channel.history(limit=int(nbMsg)):
     await message.delete()
   
