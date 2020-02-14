@@ -41,7 +41,7 @@ class Config():
     return allow
 
   async def send_warn(self,title,reason,message):
-    await LOG.warn("de <@&"+str(message.author.id)+">, titre: "+title+"\nReason: "+reason)
+    await LOG.warn("de <@"+str(message.author.id)+">, titre: "+title+"\nReason: "+reason)
     embed=discord.Embed(title=title, description=reason, color=0xfb0013)
     embed.set_author(name="TUTUTUTU")
     embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
@@ -102,6 +102,16 @@ Donne le liens d'invitation."""
   embed.add_field(name="__**Lien :**__", value="https://discord.gg/fFhrv8a", inline=True)
   await CommandLine.message.channel.send(embed=embed)
 
+@CommandLine.addFunction()
+async def speak(text:max,**kwargs) -> "speak *MESSAGE":
+  """Parle à ta place 
+Tapez un message et il l'envoie !"""
+  embed=discord.Embed(title="Message de "+CommandLine.message.author.name,description=text, color=0xf2ff06)
+  await CommandLine.message.channel.send(embed=embed)
+  await CommandLine.message.delete()
+
+
+
 
 # ---- DEBUGS COMMAND ----
 @CommandLine.addFunction(["botmoderator"])
@@ -124,14 +134,6 @@ async def ping(**kwargs) -> "ping":
 Répond `pong !`"""
   await CommandLine.message.channel.send("Pong !")
 
-@CommandLine.addFunction()
-async def speak(text:max,**kwargs) -> "speak *MESSAGE":
-  """Parle à ta place 
-Tapez un message et il l'envoie !"""
-  embed=discord.Embed(title="Message de "+CommandLine.message.author.name,description=text, color=0xf2ff06)
-  await CommandLine.message.channel.send(embed=embed)
-  await CommandLine.message.delete()
-
 
 
 # ---- ADMINS COMMANDS ----
@@ -147,7 +149,7 @@ Prévenir <@349114853333663746> en cas de problème."""
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X commandes.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
-
+  loop = asyncio.get_running_loop()
   result = await loop.run_in_executor(None, delete(CommandLine.message,3))
   return result
 
@@ -222,7 +224,7 @@ async def checkCommand(message):
 
 @CLIENT.event
 async def on_message(message):
-  if message.author.id != CLIENT.user.id: await LOG.message("<@&"+str(message.author.id)+"> "+message.content)
+  if message.author.id != CLIENT.user.id: await LOG.message("<@!"+str(message.author.id)+"> "+message.content)
   if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
 
 

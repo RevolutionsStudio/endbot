@@ -13,7 +13,7 @@ class Log():
         if self.first:
             print("["+strftime("%Y-%m-%d %H:%M:%S", gmtime())+"] Bot started.`")
             sys.stdout.flush()
-            await self.channel.send("** **\n\n\n`["+strftime("%Y-%m-%d %H:%M:%S", gmtime())+"] Bot started.`")
+            await self.channel.send("** **\n\n\n["+strftime("%Y-%m-%d %H:%M:%S", gmtime())+"] Bot started.")
             self.first = False
         stack = inspect.stack()
         modCaller = inspect.getmodule(stack[2][0])
