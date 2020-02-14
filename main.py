@@ -149,9 +149,9 @@ Prévenir <@349114853333663746> en cas de problème."""
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X commandes.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
-  p1 = Process(target=delete, args=(CommandLine.message,2))
-  p.start()
-  p.join()
+  proc = Process(target=delete, args=(CommandLine.message,2))
+  proc.start()
+  proc.join()
 
 
 
