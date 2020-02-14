@@ -187,9 +187,9 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 
 async def checkCommand(message):
   if CONF.isAdmin(message.author):return True
-  if "\n" in message.content:CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message.channel);return False
-  if len(message.content)>200:CONF.send_warn("Les commandes sont en moins de 200 charactères !","Encore, ça fais beaucoup là non ?\nTu en as tant besoin que cela ?",message.channel);return False
-  if len(message.content.split(";")) > 4:CONF.send_warn("Vous utillisez trop de commandes.","La limite est de 4.\nTu en as tant besoin que cela ?",message.channel);return False
+  if "\n" in message.content:await CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message.channel);return False
+  if len(message.content)>200:await CONF.send_warn("Les commandes sont en moins de 200 charactères !","Encore, ça fais beaucoup là non ?\nTu en as tant besoin que cela ?",message.channel);return False
+  if len(message.content.split(";")) > 4:await CONF.send_warn("Vous utillisez trop de commandes.","La limite est de 4.\nTu en as tant besoin que cela ?",message.channel);return False
   return True
 
 # /----------------------
