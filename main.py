@@ -189,7 +189,7 @@ async def checkCommand(message):
   if CONF.isAdmin(message.author):return True
   if "\n" in message.content:CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message.channel);return False
   if len(message.content)>200:CONF.send_warn("Les commandes sont en moins de 200 charactères !","Tu en as tant besoin que cela ?",message.channel);return False
-  if len(commandes) > 4:CONF.send_warn("Vous utillisez trop de commande.","La limite est de 4.\nTu en as tant besoin que cela ?",message.channel);return False
+  if len(message.content.split(";")) > 4:CONF.send_warn("Vous utillisez trop de commande.","La limite est de 4.\nTu en as tant besoin que cela ?",message.channel);return False
   return True
 
 # /----------------------
