@@ -26,6 +26,8 @@ class Config():
     self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056,"discord":676757120003080223}
     self.adminRoles = ["botmoderator","administrateurs"]
     self.logChannel = 677859982087159828
+    self.deleteWarnTime = 10
+    self.deleteHelpTime = 20
   
   def isAdmin(self,user):
     returning = False
@@ -45,11 +47,10 @@ class Config():
     embed=discord.Embed(title=title, description=reason, color=0xfb0013)
     embed.set_author(name="TUTUTUTU")
     embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
-    embed.set_footer(text="Ce message ce détruira au bout de 3 secondes.")
+    embed.set_footer(text="Ce message ce détruira au bout de "+str(CONF.deleteWarnTime)+" secondes.")
     to_destroy = await message.channel.send(embed=embed)
     await message.delete()
-    loop = asyncio.get_running_loop()
-    loop.run_in_executor(None, await delete(to_destroy,3))
+    asyncio.get_running_loop().loop.run_in_executor(None, await delete(to_destroy,CONF.deleteWarnTime))
 
 CONF = Config()
 
@@ -65,7 +66,6 @@ CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT,CONF)
 async def delete(message,time):
   await asyncio.sleep(time)
   await message.delete()
-  await CommandLine.message.channel.send("Deleted")
 
 
 
@@ -175,6 +175,7 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     
     embed_cmdUti.add_field(name="Nom", value="\n".join(["`"+fct.__name__.split(" ")[0]+"`" for fct in CommandLine.funct if fct.authGroup == None]), inline=True)
     embed_cmdUti.add_field(name="Description", value="\n".join([fct.__doc__.split("\n")[0] for fct in CommandLine.funct if fct.authGroup == None]), inline=True)
+    embed_cmdUti.set_footer(text="Ce message d'aide ce détruira au bout de "+str(CONF.deleteHelpTime)+" secondes.")
 
 
     embed_cmdAdm=discord.Embed(title="__Liste des commandes administrateurs__", color=0xfb0013)
@@ -185,8 +186,10 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     embed_cmdUti.set_thumbnail(url="https://media3.giphy.com/media/B7o99rIuystY4/source.gif")
     embed_cmdAdm.set_thumbnail(url="https://media3.giphy.com/media/B7o99rIuystY4/source.gif")
     embed_cmdAdm.set_footer(text="Le bot EndBot a été créé par Cyprien Bourotte, du studio Révolutions")
-    await message.channel.send(embed=embed_cmdUti)
-    if CONF.isAdmin(message.author):await message.channel.send(embed=embed_cmdAdm)
+    to_destroy = await message.channel.send(embed=embed_cmdAdm)
+    asyncio.get_running_loop().loop.run_in_executor(None, await delete(to_destroy,CONF.deleteHelpTime))
+    to_destroy2 = await message.channel.send(embed=embed_cmdUti)
+    asyncio.get_running_loop().loop.run_in_executor(None, await delete(to_destroy2,CONF.deleteHelpTime))
     return "Je t'incite à faire `!help COMMANDE` pour plus d'infos, ou encore `!help cmd` pour des informations complémentaire"
 
   for funct in CommandLine.funct:
@@ -194,24 +197,25 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
       if CONF.canBeUse(funct,message.author):
         # HELP FUNCTION
         embed=discord.Embed(title="Commande : "+funct.__name__.split(" ")[0], description=str("\n".join(funct.__doc__.split("\n")[1:])), color=0x80ffff)
+        embed.set_footer(text="Ce message d'aide ce détruira au bout de "+str(CONF.deleteHelpTime)+" secondes.")
         embed.set_author(name="Aide")
         embed.set_thumbnail(url="https://media1.giphy.com/media/IQ47VvDzlzx9S/giphy.gif")
         embed.add_field(name="Syntaxe :", value="`"+funct.__name__+"`", inline=False)
         if funct.authGroup != None: embed.set_footer(text="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()))
-        await message.channel.send(embed=embed)
+        to_destroy = await message.channel.send(embed=embed)
+        asyncio.get_running_loop().loop.run_in_executor(None, await delete(to_destroy,CONF.deleteHelpTime))
         return 
       else:
         # DONT ALLOW
-        embed=discord.Embed(title="Vous n'avez pas accès à cette commande.", description="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()), color=0xfb0013)
-        embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
-        await message.channel.send(embed=embed)
+        CONF.send_warn("Vous n'avez pas accès à cette commande.","Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower(),CommandLine.message))
         return
   if info.lower() == "cmd":
     embed=discord.Embed(title="__Aide sur l'utillisation des commandes__", description="Les messages qui sont des commandes doivent commancer par `!`\nVous pouvez aussi executer plusieurs commandes à la suite en utillisant le séparateur `;`.\nSeulement le retour de la dernière commande sera affiché.", color=0xfbe800)
     embed.add_field(name="Exemple :", value="`!notif all;notif rogemus` : Donera tout les rôles sauf le rôle Rogemus", inline=False)
     embed.set_thumbnail(url="https://media1.giphy.com/media/IQ47VvDzlzx9S/giphy.gif")
     embed.set_footer(text="Le bot EndBot a été créé par Cyprien Bourotte, du studio Révolutions.")
-    await message.channel.send(embed=embed)
+    to_destroy = await message.channel.send(embed=embed)
+    asyncio.get_running_loop().loop.run_in_executor(None, await delete(to_destroy,CONF.deleteHelpTime))
     return 
   return "Commande pour l'aide inconnue.\nTapez `!help` pour la liste des commandes.\nTapez `help cmd` pour les informations d'utillisation des commandes."
 
