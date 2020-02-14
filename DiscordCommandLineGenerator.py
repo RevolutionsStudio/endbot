@@ -21,8 +21,6 @@ class CommandLine():
 
     self.__cmdErrorFeedback = kwargs.get("commandErrorFeedback",True)
     self.__debug = kwargs.get("debug",True)
-
-    self.activeSymbol = kwargs.get("activeSymbol","=> ")
   
   def setVars(self,kwargs):
     self.vars = kwargs
@@ -92,9 +90,6 @@ class CommandLine():
       self.cmdReturn = await self.__command(trt_commande,[y.name.lower() for y in message.author.roles])
     if self.cmdReturn != None: return self.cmdReturn
 
-  def start(self):
-    if self.__debug: print("\n"*10)
-    print(self.__msgStart)
 
   # executer une commande
   async def __command(self,execute,userRole=[]):

@@ -6,42 +6,26 @@
 # \----------------------
 
 
-#  p1 = Process(target=func1)
-#  p1.start()
-
 import sys, os
 import shlex
+import com.log as log
 
 LATENCY = []
 
-
-def echo(*args):
-  print(*args)
-  sys.stdout.flush()
-  LATENCY.append(" ".join(args))
-
-
-async def Aecho(*args):
-  LATENCY.append(" ".join(args))
-  if CLIENT.user !=None:
-    for x in LATENCY:
-      embed=discord.Embed(title="Log", description=x,color=0xf2ff06)
-      ch = CLIENT.get_channel(12324234183172)
-      await ch.send("Pong !")
-    LATENCY = []
-
-
+from time import gmtime, strftime
 import asyncio, discord
 CLIENT = discord.Client()
 
-echo("Code started")
-
+def echo(*arg):
+  print(*arg)
+  sys.stdout.flush()
 
 class Config():
 
   def __init__(self):
     self.roles = {"rasylium":672561014541123612, "revolutions":672561273690390558, "rideos":672561319609761832, "rogemus":672561348751917056,"discord":676757120003080223}
     self.adminRoles = ["botmoderator","administrateurs"]
+    self.logChannel = 677859982087159828
   
   def isAdmin(self,user):
     returning = False
@@ -57,12 +41,12 @@ class Config():
     return allow
 
   async def send_warn(self,title,reason,message):
+    LOG.warn("de <@"+message.author.id+">, titre: "+title+"\nReason: "+reason)
     embed=discord.Embed(title=title, description=reason, color=0xfb0013)
     embed.set_author(name="TUTUTUTU")
     embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
     await message.channel.send(embed=embed)
     await message.delete()
-
 
 CONF = Config()
 
@@ -78,7 +62,7 @@ CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT,CONF)
 async def delete(message,time):
   await asyncio.sleep(time)
   await message.delete()
-  await CommandLine.message.channel.send("Pong !")
+  await CommandLine.message.channel.send("Deleted")
 
 
 
@@ -238,13 +222,13 @@ async def checkCommand(message):
 
 @CLIENT.event
 async def on_message(message):
-  await Aecho(message.author.name,message.content)
+  if message.author.id != CLIENT.user.id: await LOG.message("<@"+str(message.author.id)+"> "+message.content)
   if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
 
 
   elif len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]
-    if not await checkCommand(message): return # SECURITY
+    if not await checkCommand(message):return # SECURITY
     ret = await CommandLine.execute(message)
     if ret != None and ret != "": await message.channel.send(ret)
   
@@ -252,7 +236,10 @@ async def on_message(message):
 
 @CLIENT.event
 async def on_ready():
-  await Aecho("BOT LOGGED IN !\nUsername: "+CLIENT.user.name+"\nID: "+str(CLIENT.user.id))
+  global LOG
+  LOG = log.Log(CLIENT.get_channel(CONF.logChannel))
+  await LOG.custom("Bot Started.","start")
+  await LOG.info("\nUsername: "+CLIENT.user.name+"\nID: "+str(CLIENT.user.id))
 
 
 # /----------------------
@@ -269,5 +256,5 @@ except KeyError:
 
 echo("TOKEN:",token)
 
-
+CLIENT.run(token)
 # if this sentence is modified, it just mean that I need to update the code for refresh the bot on Heraku server.
