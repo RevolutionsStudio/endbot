@@ -12,16 +12,29 @@
 import sys, os
 import shlex
 
-from multiprocessing import Process
+LATENCY = []
+
 
 def echo(*args):
   print(*args)
   sys.stdout.flush()
+  LATENCY.append(" ".join(args))
 
-echo("Code Started")
+
+async def Aecho(*args):
+  LATENCY.append(" ".join(args))
+  if CLIENT.user !=None:
+    for x in LATENCY:
+      embed=discord.Embed(title="Log", description=x,color=0xf2ff06)
+      ch = CLIENT.get_channel(12324234183172)
+      await ch.send("Pong !")
+    LATENCY = []
+
 
 import asyncio, discord
 CLIENT = discord.Client()
+
+echo("Code started")
 
 
 class Config():
@@ -65,6 +78,7 @@ CommandLine = DiscordCommandLineGenerator.CommandLine(CLIENT,CONF)
 async def delete(message,time):
   await asyncio.sleep(time)
   await message.delete()
+  await CommandLine.message.channel.send("Pong !")
 
 
 
@@ -149,9 +163,9 @@ Prévenir <@349114853333663746> en cas de problème."""
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X commandes.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
-  proc = Process(target=delete, args=(CommandLine.message,2))
-  proc.start()
-  proc.join()
+
+  result = await loop.run_in_executor(None, delete(CommandLine.message,3))
+  return result
 
 
 
@@ -224,7 +238,7 @@ async def checkCommand(message):
 
 @CLIENT.event
 async def on_message(message):
-  echo(message.author.name,message.content)
+  await Aecho(message.author.name,message.content)
   if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
 
 
@@ -238,9 +252,7 @@ async def on_message(message):
 
 @CLIENT.event
 async def on_ready():
-  echo('BOT LOGGED IN !')
-  echo("Username: "+CLIENT.user.name)
-  echo("ID: "+str(CLIENT.user.id))
+  await Aecho("BOT LOGGED IN !\nUsername: "+CLIENT.user.name+"\nID: "+str(CLIENT.user.id))
 
 
 # /----------------------
@@ -252,10 +264,10 @@ try:
   token = os.environ['TOKEN']
 except KeyError:
   # Not on server
-  echo("Quit because TOKEN not found.")
+  echo("Exit because TOKEN not found")
   exit()
 
-echo(token)
-CLIENT.run(token)
+echo("TOKEN:",token)
+
 
 # if this sentence is modified, it just mean that I need to update the code for refresh the bot on Heraku server.

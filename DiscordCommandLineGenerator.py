@@ -2,9 +2,6 @@ import shlex
 import sys
 import asyncio
 import discord 
-def echo(*args):
-  print(*args)
-  sys.stdout.flush()
 
 # La classe de la ligne de commande
 class CommandLine():
