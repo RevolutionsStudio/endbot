@@ -38,11 +38,12 @@ class Config():
         if x in funct.authGroup:allow = True;
     return allow
 
-  async def send_warn(self,title,reason,channel):
+  async def send_warn(self,title,reason,message):
     embed=discord.Embed(title=title, description=reason, color=0xfb0013)
     embed.set_author(name="TUTUTUTU")
     embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
-    await channel.send(embed=embed)
+    await message.channel.send(embed=embed)
+    await message.delete()
 
 
 CONF = Config()
@@ -187,9 +188,9 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 
 async def checkCommand(message):
   if CONF.isAdmin(message.author):return True
-  if "\n" in message.content:await CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message.channel);return False
-  if len(message.content)>200:await CONF.send_warn("Les commandes sont en moins de 200 charactères !","Encore, ça fais beaucoup là non ?\nTu en as tant besoin que cela ?",message.channel);return False
-  if len(message.content.split(";")) > 4:await CONF.send_warn("Vous utillisez trop de commandes.","La limite est de 4.\nTu en as tant besoin que cela ?",message.channel);return False
+  if "\n" in message.content:await CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message);return False
+  if len(message.content)>200:await CONF.send_warn("Les commandes sont en moins de 200 charactères !","Encore, ça fais beaucoup là non ?\nTu en as tant besoin que cela ?",message);return False
+  if len(message.content.split(";")) > 4:await CONF.send_warn("Vous utillisez trop de commandes.","La limite est de 4.\nTu en as tant besoin que cela ?",message);return False
   return True
 
 # /----------------------
@@ -205,8 +206,7 @@ async def on_message(message):
 
   elif len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]
-    # SECURITY
-    if not await checkCommand(message): return
+    if not await checkCommand(message): return # SECURITY
     ret = await CommandLine.execute(message)
     if ret != None and ret != "": await message.channel.send(ret)
   
