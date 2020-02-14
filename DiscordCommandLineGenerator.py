@@ -89,11 +89,6 @@ class CommandLine():
 
   async def execute(self,message):
     commandes = message.content.split(";")
-    if len(commandes) > 4 and not self.CONF.isAdmin(message.author):
-      embed=discord.Embed(title="TUTUTUTUTU.", description="Vous utillisez trop de commande.\nLa limite est de 4 ", color=0xfb0013)
-      embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
-      await message.channel.send(embed=embed)
-      return
     self.message = message
     for commande in commandes:
       trt_commande = commande.split(" ")
@@ -128,10 +123,8 @@ class CommandLine():
           finally:
             find = True # we found the function
         else:
-          embed=discord.Embed(title="Vous n'avez pas accès à cette commande.", description="Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()), color=0xfb0013)
-          embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
-          await self.message.channel.send(embed=embed)
-          return 
+          self.CONF.send_warn("Vous n'avez pas accès à cette commande.","Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()),self.message.channel)
+          return
     if not find: # if we havn't find the function
       returning = self.__msgUnknow # echoing the error message
     return returning

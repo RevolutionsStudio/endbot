@@ -38,6 +38,11 @@ class Config():
         if x in funct.authGroup:allow = True;
     return allow
 
+  async def send_warn(self,title,reason,channel):
+    embed=discord.Embed(title=title, description=reason, color=0xfb0013)
+    embed.set_author(name="TUTUTUTU")
+    embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
+    await channel.send(embed=embed)
 
 
 CONF = Config()
@@ -178,6 +183,15 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
     return 
   return "Commande pour l'aide inconnue.\nTapez `!help` pour la liste des commandes.\nTapez `help cmd` pour les informations d'utillisation des commandes."
 
+
+
+async def checkCommand(message):
+  if self.CONF.isAdmin(message.author):return True
+  if "\n" in message.content:CONF.send_warn("Les commandes sont en une ligne !","Sinon, c'est limite du spam.",message.channel);return False
+  if len(message.content)>200:CONF.send_warn("Les commandes sont en moins de 200 charactères !","Tu en as tant besoin que cela ?",message.channel);return False
+  if len(commandes) > 4:CONF.send_warn("Vous utillisez trop de commande.","La limite est de 4.\nTu en as tant besoin que cela ?",message.channel);return False
+  return True
+
 # /----------------------
 # | Bot
 # \----------------------
@@ -187,8 +201,12 @@ Tapez `help cmd` pour une aide sur le fonctionnement des commandes'''
 async def on_message(message):
   echo(message.author.name,message.content)
   if isinstance(message.channel,discord.DMChannel): await message.channel.send("Je ne marche pas en privé, veuillez envoyer votre commande dans <#676549676916539517>")
+
+
   elif len(message.content)>2 and message.content[0] == "!":
     message.content = message.content[1:]
+    # SECURITY
+    if not await checkCommand(message): return
     ret = await CommandLine.execute(message)
     if ret != None and ret != "": await message.channel.send(ret)
   
