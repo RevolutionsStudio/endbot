@@ -150,7 +150,7 @@ async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X commandes.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
   loop = asyncio.get_running_loop()
-  result = await loop.run_in_executor(None, delete(CommandLine.message,3))
+  result = await loop.run_in_executor(None, await delete(CommandLine.message,3))
   return result
 
 
