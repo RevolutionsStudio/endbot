@@ -45,8 +45,11 @@ class Config():
     embed=discord.Embed(title=title, description=reason, color=0xfb0013)
     embed.set_author(name="TUTUTUTU")
     embed.set_thumbnail(url="https://media.tenor.com/images/a4fd1165d9d64832bc2b0fda3ecdf0e1/tenor.gif")
-    await message.channel.send(embed=embed)
+    embed.set_footer(text="Ce message ce détruira au bout de 3 secondes.")
+    to_destroy = await message.channel.send(embed=embed)
     await message.delete()
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, delete(to_destroy,3))
 
 CONF = Config()
 
@@ -149,9 +152,10 @@ Prévenir <@349114853333663746> en cas de problème."""
 async def deleteCmd(nbMsg:(int,1),**kwargs) -> "delete [INT]":
   """Supprimme X commandes.
 Ne rien indiqué surprimme le dernier message. Nous ne comptons pas la commande dans le message."""
-  loop = asyncio.get_running_loop()
-  result = await loop.run_in_executor(None, await delete(CommandLine.message,3))
-  return result
+  async for message in CommandLine.message.channel.history(limit=nbMsg):
+    await message.delete()
+  
+
 
 
 
