@@ -123,7 +123,7 @@ class CommandLine():
           finally:
             find = True # we found the function
         else:
-          self.CONF.send_warn("Vous n'avez pas accès à cette commande.","Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()),self.message.channel)
+          await self.CONF.send_warn("Vous n'avez pas accès à cette commande.","Cette commande n'est utilisable seulement avec le role "+str(" ou ".join(funct.authGroup).lower()),self.message.channel)
           return
     if not find: # if we havn't find the function
       returning = self.__msgUnknow # echoing the error message
