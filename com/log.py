@@ -7,8 +7,14 @@ class Log():
     def __init__(self,channel,**kwargs):
         self.log_levels = kwargs.get("log_level",["ALL"])
         self.channel = channel
+        self.first = True
     
     async def __out(self,message,log_type):
+        if self.first:
+            print("["+strftime("%Y-%m-%d %H:%M:%S", gmtime())+"] Bot started.`")
+            sys.stdout.flush()
+            await self.channel.send("** **\n\n\n`["+strftime("%Y-%m-%d %H:%M:%S", gmtime())+"] Bot started.`")
+            self.first = False
         stack = inspect.stack()
         modCaller = inspect.getmodule(stack[2][0])
         try:
@@ -21,7 +27,7 @@ class Log():
         if log_type in self.log_levels or "ALL" in self.log_levels:
             print("["+log_type+"] "+str(classCaller)+str(methodCaller)+": "+str(message))
             sys.stdout.flush()
-        await self.channel.send("`"+log+"`\n")
+        await self.channel.send("`"+log+"`")
 
     async def debug(self,message):await self.__out(message,"DEBUG")
     async def info(self,message):await self.__out(message,"INFO")

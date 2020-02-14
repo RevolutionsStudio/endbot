@@ -238,8 +238,7 @@ async def on_message(message):
 async def on_ready():
   global LOG
   LOG = log.Log(CLIENT.get_channel(CONF.logChannel))
-  await LOG.custom("Bot Started.","start")
-  await LOG.info("\nUsername: "+CLIENT.user.name+"\nID: "+str(CLIENT.user.id))
+  await LOG.info("Username: "+CLIENT.user.name+";    ID: "+str(CLIENT.user.id))
 
 
 # /----------------------
